@@ -101,6 +101,9 @@ class Day3 {
 	}
 }
 
+/**
+ * Main function for solving Advent of Code 2023, Day 3 puzzles.
+ */
 fun main() {
 	val solver = Day3() // Replace with the actual file path
 	println("List of part numbers (Part 1): ${solver.solvePart1().sum()}")

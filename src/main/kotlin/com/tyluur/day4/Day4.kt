@@ -75,8 +75,11 @@ class Day4(private val filePath: String) {
 	}
 }
 
+/**
+ * Main function for solving Advent of Code 2023, Day 4 puzzles.
+ */
 fun main() {
-	val solver = Day4("src/main/resources/day-4-input.txt") // Replace with the actual file path
+	val solver = Day4("src/main/resources/day-4-input.txt")
 	println("Total points (Part 1): ${solver.solvePart1()}")
 	println("Total scratchcards won (Part 2): ${solver.solvePart2()}")
 }
