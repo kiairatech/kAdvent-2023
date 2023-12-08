@@ -4,23 +4,25 @@ import com.tyluur.Puzzle
 
 /**
  * Solver for Day 5 of the Advent of Code challenge, titled "If You Give A Seed A Fertilizer".
- * This object extends the Puzzle class and is responsible for parsing an almanac to determine
- * the lowest location number corresponding to given seed numbers.
+ * This object extends the Puzzle class and is tasked with parsing an almanac to determine
+ * the lowest location number corresponding to given seed numbers, addressing both part 1 and part 2
+ * of the challenge.
  */
 object Day5 : Puzzle<Day5.Almanac>(5) {
 
 	/**
 	 * Parses the input data to create an Almanac object.
-	 * The input is processed to extract seeds and mappings according to the almanac's format.
+	 * Extracts seeds and mappings from the input according to the almanac's format.
 	 *
 	 * @param input A sequence of strings representing the input data.
 	 * @return An Almanac object representing the parsed seeds and mappings.
+	 * @throws IllegalArgumentException if the seeds line in the input is empty or malformed.
+	 * @throws NumberFormatException if seed numbers are invalid.
 	 */
 	override fun parse(input: Sequence<String>): Almanac {
 		val lines = input.toList()
 		val seedsLine = lines.first().substringAfter("seeds: ").trim()
 
-		// Safeguard against empty seeds line
 		if (seedsLine.isEmpty()) {
 			throw IllegalArgumentException("Seeds line is empty or malformed in input file.")
 		}
@@ -35,10 +37,10 @@ object Day5 : Puzzle<Day5.Almanac>(5) {
 			val mappings = section.substringAfter("\n").lines().mapNotNull { line ->
 				val parts = line.split(" ").filter { it.isNotBlank() }
 				if (parts.size == 3) {
-					val (destStart, sourceStart, length) = parts.map(String::toLong)
+					val (sourceStart, destStart, length) = parts.map(String::toLong)
 					Mapping(sourceStart, destStart, length)
 				} else {
-					null // or throw an exception if such a case should be considered invalid
+					null // Skip malformed lines
 				}
 			}
 			mapName to mappings
@@ -49,7 +51,8 @@ object Day5 : Puzzle<Day5.Almanac>(5) {
 
 	/**
 	 * Solves Part 1 of the Day 5 puzzle.
-	 * Determines the lowest location number corresponding to the initial seed numbers.
+	 * Determines the lowest location number corresponding to the initial seed numbers
+	 * by applying the mapping logic defined in the Almanac.
 	 *
 	 * @param input The parsed Almanac object containing seeds and mappings.
 	 * @return The lowest location number for the initial seeds as a Long value.
@@ -63,6 +66,7 @@ object Day5 : Puzzle<Day5.Almanac>(5) {
 	/**
 	 * Solves Part 2 of the Day 5 puzzle.
 	 * Processes seed ranges and determines the lowest location number for these seed ranges.
+	 * Optimizes the processing by considering only the start and end of each seed range.
 	 *
 	 * @param input The parsed Almanac object containing seeds and mappings.
 	 * @return The lowest location number for the seed ranges as a Long value.
@@ -73,11 +77,8 @@ object Day5 : Puzzle<Day5.Almanac>(5) {
 
 		for ((start, length) in seedRanges) {
 			val end = start + length
-			// Process only the start and end of each range for optimization
 			val startLocationNumber = convertThroughMaps(start, input.maps)
 			val endLocationNumber = convertThroughMaps(end, input.maps)
-
-			// Compare both start and end location numbers with the current lowest location number
 			lowestLocationNumber = minOf(lowestLocationNumber, startLocationNumber, endLocationNumber)
 		}
 
@@ -86,6 +87,7 @@ object Day5 : Puzzle<Day5.Almanac>(5) {
 
 	/**
 	 * Converts a seed number through a series of mappings to find its corresponding location number.
+	 * Applies each mapping to the seed value if it falls within the source range of the mapping.
 	 *
 	 * @param value The initial seed value to be converted.
 	 * @param maps The mappings from the almanac to apply to the seed.
