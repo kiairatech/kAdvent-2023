@@ -83,7 +83,7 @@ class Day1 {
  * The main method of this class
  */
 fun main() {
-	val filePath = "src/main/resources/day-1-input.txt" // Replace with the actual file path
+	val filePath = "src/main/resources/day-1-input.txt"
 	val totalCalibrationValue = Day1().sumCalibrationValuesFromFile(filePath)
 	logger.info { "Total Calibration Value: $totalCalibrationValue" }
 }
