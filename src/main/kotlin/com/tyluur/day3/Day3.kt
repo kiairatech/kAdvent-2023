@@ -3,7 +3,8 @@ import java.io.File
 /**
  * A solver for Day 3's "Gear Ratios" puzzle.
  *
- * @property filePath Path to the input file containing the engine schematic.
+ * @author Tyluur <contact@tyluur.com>
+ * @since December 7th, 2023
  */
 class Day3 {
 
