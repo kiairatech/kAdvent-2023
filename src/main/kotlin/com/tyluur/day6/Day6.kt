@@ -1,26 +1,45 @@
 package com.tyluur.day6
 
-import com.github.michaelbull.logging.InlineLogger
-import java.io.File
+import com.tyluur.Puzzle
 
 /**
  * Solver for the Day 6 Advent of Code puzzle, "Wait For It".
  * Calculates the number of ways to win toy boat races based on their duration and record distances.
- *
- * @property filePath The path to the input file containing the race data.
  */
-class Day6(private val filePath: String) {
+object Day6 : Puzzle<List<Race>>(6) {
 	/**
-	 * Parses the input file to create a list of Race objects.
+	 * Parses the input data for the puzzle.
 	 *
-	 * @return A list of Race objects representing each race in the input file.
+	 * @param input The input data as a sequence of strings.
+	 * @return The parsed input data.
 	 */
-	private fun parseInput() = File(filePath).useLines { lines ->
+	override fun parse(input: Sequence<String>): List<Race> {
+		val lines = input.toList()
 		val (durations, records) = lines.map { it.substringAfter(":").trim() }
 			.take(2)
 			.map { parseLongs(it) }
 			.toList()
-		durations.zip(records).map { (duration, record) -> Race(duration, record) }
+		return durations.zip(records).map { (duration, record) -> Race(duration, record) }
+	}
+
+	/**
+	 * Solves Part 1 of the puzzle by calculating the total number of ways to win across all races.
+	 *
+	 * @param input The parsed input data.
+	 * @return The solution to Part 1 of the puzzle.
+	 */
+	override fun solvePart1(input: List<Race>): Int {
+		return input.map(Race::countWins).reduce(Int::times)
+	}
+
+	/**
+	 * Solves Part 2 of the puzzle by calculating the number of ways to win a single, combined race.
+	 *
+	 * @param input The parsed input data.
+	 * @return The solution to Part 2 of the puzzle.
+	 */
+	override fun solvePart2(input: List<Race>): Int {
+		return input[0].countWins()
 	}
 
 	/**
@@ -31,24 +50,6 @@ class Day6(private val filePath: String) {
 	 */
 	private fun parseLongs(s: String) =
 		s.split(" +".toRegex()).map(String::toLong)
-
-	/**
-	 * Solves Part 1 of the puzzle by calculating the total number of ways to win across all races.
-	 *
-	 * @return The product of the number of ways to win each race.
-	 */
-	fun solvePart1() = parseInput().map(Race::countWins).reduce(Int::times)
-
-	/**
-	 * Solves Part 2 of the puzzle by calculating the number of ways to win a single, combined race.
-	 *
-	 * @return The number of ways to win the combined race.
-	 */
-	fun solvePart2() = File(filePath).useLines { lines ->
-		val (duration, record) = lines.map { it.substringAfter(":").replace(" +".toRegex(), "").toLong() }
-			.toList()
-		Race(duration, record).countWins()
-	}
 }
 
 /**
@@ -67,15 +68,3 @@ data class Race(val duration: Long, val record: Long) {
 		(duration - velocity) * velocity > record
 	}
 }
-
-/**
- * Main function to run the solver for Day 6's puzzle.
- */
-fun main() {
-	val solver = Day6("src/main/resources/day-6-input.txt")
-	logger.info { "Number of ways to win (Part 1): ${solver.solvePart1()}" }
-	logger.info { "Number of ways to win (Part 2): ${solver.solvePart2()}" }
-}
-
-/** The instance of the logger for day 6 */
-private val logger = InlineLogger()
