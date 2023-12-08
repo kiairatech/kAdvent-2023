@@ -18,16 +18,32 @@ object Day5 : Puzzle<Day5.Almanac>(5) {
 	 */
 	override fun parse(input: Sequence<String>): Almanac {
 		val lines = input.toList()
-		val seeds = lines.first().substringAfter("seeds: ").split(" ").map { it.toLong() }
+		val seedsLine = lines.first().substringAfter("seeds: ").trim()
+
+		// Safeguard against empty seeds line
+		if (seedsLine.isEmpty()) {
+			throw IllegalArgumentException("Seeds line is empty or malformed in input file.")
+		}
+
+		val seeds = seedsLine.split(" ")
+			.filter { it.isNotBlank() }
+			.map { it.toLongOrNull() ?: throw NumberFormatException("Invalid seed number: '$it'") }
+
 		val maps = lines.drop(1).associate { section ->
 			val header = section.substringBefore("\n")
 			val mapName = header.substringBefore("-to-")
-			val mappings = section.substringAfter("\n").lines().map { line ->
-				val (destStart, sourceStart, length) = line.split(" ").map(String::toLong)
-				Mapping(sourceStart, destStart, length)
+			val mappings = section.substringAfter("\n").lines().mapNotNull { line ->
+				val parts = line.split(" ").filter { it.isNotBlank() }
+				if (parts.size == 3) {
+					val (destStart, sourceStart, length) = parts.map(String::toLong)
+					Mapping(sourceStart, destStart, length)
+				} else {
+					null // or throw an exception if such a case should be considered invalid
+				}
 			}
 			mapName to mappings
 		}
+
 		return Almanac(seeds, maps)
 	}
 
@@ -52,12 +68,20 @@ object Day5 : Puzzle<Day5.Almanac>(5) {
 	 * @return The lowest location number for the seed ranges as a Long value.
 	 */
 	override fun solvePart2(input: Almanac): Any {
-		val seedRanges = input.seeds.chunked(2).flatMap { (start, length) ->
-			(start until (start + length)).toList()
+		val seedRanges = input.seeds.chunked(2)
+		var lowestLocationNumber = Long.MAX_VALUE
+
+		for ((start, length) in seedRanges) {
+			val end = start + length
+			// Process only the start and end of each range for optimization
+			val startLocationNumber = convertThroughMaps(start, input.maps)
+			val endLocationNumber = convertThroughMaps(end, input.maps)
+
+			// Compare both start and end location numbers with the current lowest location number
+			lowestLocationNumber = minOf(lowestLocationNumber, startLocationNumber, endLocationNumber)
 		}
-		return seedRanges.map { seed ->
-			convertThroughMaps(seed, input.maps)
-		}.minOrNull() ?: Long.MAX_VALUE
+
+		return lowestLocationNumber
 	}
 
 	/**
@@ -89,7 +113,7 @@ object Day5 : Puzzle<Day5.Almanac>(5) {
 	 */
 	data class Almanac(
 		val seeds: List<Long>,
-		val maps: Map<String, List<Mapping>>
+		val maps: Map<String, List<Mapping>>,
 	)
 
 	/**
@@ -103,7 +127,7 @@ object Day5 : Puzzle<Day5.Almanac>(5) {
 	data class Mapping(
 		val sourceStart: Long,
 		val destStart: Long,
-		val length: Long
+		val length: Long,
 	) {
 		val sourceRange = sourceStart until sourceStart + length
 	}
