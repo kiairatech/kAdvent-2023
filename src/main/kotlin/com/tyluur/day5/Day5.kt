@@ -1,29 +1,23 @@
 package com.tyluur.day5
 
-import com.github.michaelbull.logging.InlineLogger
-import java.io.File
+import com.tyluur.Puzzle
 
 /**
- * Solver for the Day 5 Advent of Code puzzle, "If You Give A Seed A Fertilizer".
- * Parses an almanac to determine the lowest location number corresponding to seed numbers.
- *
- * @property filePath Path to the input file containing the puzzle data.
+ * Solver for Day 5 of the Advent of Code challenge, titled "If You Give A Seed A Fertilizer".
+ * This object extends the Puzzle class and is responsible for parsing an almanac to determine
+ * the lowest location number corresponding to given seed numbers.
  */
-class Day5(private val filePath: String) {
+object Day5 : Puzzle<Day5.Almanac>(5) {
 
 	/**
-	 * Lazy-initialized Almanac object representing the parsed input data.
-	 */
-	private val almanac: Almanac by lazy { parseAlmanac() }
-
-	/**
-	 * Parses the input file to create an Almanac object.
-	 * Processes seeds and mappings from the almanac input format.
+	 * Parses the input data to create an Almanac object.
+	 * The input is processed to extract seeds and mappings according to the almanac's format.
 	 *
-	 * @return Almanac object representing the parsed data.
+	 * @param input A sequence of strings representing the input data.
+	 * @return An Almanac object representing the parsed seeds and mappings.
 	 */
-	private fun parseAlmanac(): Almanac {
-		val lines = File(filePath).readText().trim().split("\n\n")
+	override fun parse(input: Sequence<String>): Almanac {
+		val lines = input.toList()
 		val seeds = lines.first().substringAfter("seeds: ").split(" ").map { it.toLong() }
 		val maps = lines.drop(1).associate { section ->
 			val header = section.substringBefore("\n")
@@ -38,29 +32,31 @@ class Day5(private val filePath: String) {
 	}
 
 	/**
-	 * Solves Part 1 of the puzzle.
+	 * Solves Part 1 of the Day 5 puzzle.
 	 * Determines the lowest location number corresponding to the initial seed numbers.
 	 *
-	 * @return The lowest location number for the initial seeds.
+	 * @param input The parsed Almanac object containing seeds and mappings.
+	 * @return The lowest location number for the initial seeds as a Long value.
 	 */
-	fun solvePart1(): Long {
-		return almanac.seeds.map { seed ->
-			convertThroughMaps(seed, almanac.maps)
+	override fun solvePart1(input: Almanac): Any {
+		return input.seeds.map { seed ->
+			convertThroughMaps(seed, input.maps)
 		}.minOrNull() ?: Long.MAX_VALUE
 	}
 
 	/**
-	 * Solves Part 2 of the puzzle.
-	 * Handles seed ranges and determines the lowest location number for these seed ranges.
+	 * Solves Part 2 of the Day 5 puzzle.
+	 * Processes seed ranges and determines the lowest location number for these seed ranges.
 	 *
-	 * @return The lowest location number for the seed ranges.
+	 * @param input The parsed Almanac object containing seeds and mappings.
+	 * @return The lowest location number for the seed ranges as a Long value.
 	 */
-	fun solvePart2(): Long {
-		val seedRanges = almanac.seeds.chunked(2).flatMap { (start, length) ->
+	override fun solvePart2(input: Almanac): Any {
+		val seedRanges = input.seeds.chunked(2).flatMap { (start, length) ->
 			(start until (start + length)).toList()
 		}
 		return seedRanges.map { seed ->
-			convertThroughMaps(seed, almanac.maps)
+			convertThroughMaps(seed, input.maps)
 		}.minOrNull() ?: Long.MAX_VALUE
 	}
 
@@ -68,7 +64,7 @@ class Day5(private val filePath: String) {
 	 * Converts a seed number through a series of mappings to find its corresponding location number.
 	 *
 	 * @param value The initial seed value to be converted.
-	 * @param maps The mappings from the almanac to apply.
+	 * @param maps The mappings from the almanac to apply to the seed.
 	 * @return The final location number after applying all mappings.
 	 */
 	private fun convertThroughMaps(value: Long, maps: Map<String, List<Mapping>>): Long {
@@ -102,6 +98,7 @@ class Day5(private val filePath: String) {
 	 * @property sourceStart Starting number of the source range.
 	 * @property destStart Starting number of the destination range.
 	 * @property length Length of the number range.
+	 * @property sourceRange The range of source numbers derived from the sourceStart and length.
 	 */
 	data class Mapping(
 		val sourceStart: Long,
@@ -111,12 +108,3 @@ class Day5(private val filePath: String) {
 		val sourceRange = sourceStart until sourceStart + length
 	}
 }
-
-fun main() {
-	val solver = Day5("path/to/day-5-input.txt")
-	logger.info { "Lowest location number (Part 1): ${solver.solvePart1()}" }
-	logger.info { "Lowest location number (Part 2): ${solver.solvePart2()}" }
-}
-
-/** The instance of the logger for day 5 */
-private val logger = InlineLogger()
