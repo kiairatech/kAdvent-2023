@@ -9,7 +9,7 @@ import java.io.File
  * @author Tyluur <contact@tyluur.com>
  * @since December 7th, 2023
  */
-object Day1 {
+class Day1 {
 
 	/**
 	 * Mapping of spelled-out numbers to their respective digits
@@ -41,8 +41,10 @@ object Day1 {
 	 * Calculate the calibration value of a line
 	 */
 	private fun calculateCalibrationValue(line: String): Int {
-		val digits = replaceSpelledOutNumbers(line).filter { it.isDigit() }
-		return when {
+		val replacedLine = replaceSpelledOutNumbers(line)
+		val digits = replacedLine.filter { it.isDigit() }
+
+		val calibrationValue = when {
 			digits.length >= 2 -> {
 				// Combine first and last digit to form a two-digit number
 				"${digits.first()}${digits.last()}".toInt()
@@ -57,6 +59,9 @@ object Day1 {
 				0
 			}
 		}
+		logger.info { "Original line: '$line', Replaced line: '$replacedLine', Calibration value: $calibrationValue" }
+
+		return calibrationValue
 	}
 
 	/**
@@ -66,21 +71,24 @@ object Day1 {
 		var totalSum = 0
 		File(filePath).forEachLine {
 			val calculateCalibrationValue = calculateCalibrationValue(it)
-			//logger.info { "$it [totalSum= $calculateCalibrationValue]" }
+//			logger.info { "$it [totalSum= $calculateCalibrationValue]" }
 			totalSum += calculateCalibrationValue
 		}
 		return totalSum
 	}
 
-	/**
-	 * The instance of this logger
-	 */
-	private val logger = InlineLogger()
-
 }
 
+/**
+ * The main method of this class
+ */
 fun main() {
 	val filePath = "src/main/resources/day-1-input.txt" // Replace with the actual file path
-	val totalCalibrationValue = Day1.sumCalibrationValuesFromFile(filePath)
-	println("Total Calibration Value: $totalCalibrationValue")
+	val totalCalibrationValue = Day1().sumCalibrationValuesFromFile(filePath)
+	logger.info { "Total Calibration Value: $totalCalibrationValue" }
 }
+
+/**
+ * The instance of this logger
+ */
+private val logger = InlineLogger()
