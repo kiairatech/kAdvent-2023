@@ -15,7 +15,7 @@ class Day6(private val filePath: String) {
 	 *
 	 * @return A list of Race objects representing each race in the input file.
 	 */
-	private fun parseInput(): List<Race> = File(filePath).useLines { lines ->
+	private fun parseInput() = File(filePath).useLines { lines ->
 		val (durations, records) = lines.map { it.substringAfter(":").trim() }
 			.take(2)
 			.map { parseLongs(it) }
@@ -29,7 +29,7 @@ class Day6(private val filePath: String) {
 	 * @param s The string to be parsed.
 	 * @return A list of long numbers extracted from the string.
 	 */
-	private fun parseLongs(s: String): List<Long> =
+	private fun parseLongs(s: String) =
 		s.split(" +".toRegex()).map(String::toLong)
 
 	/**
@@ -37,14 +37,14 @@ class Day6(private val filePath: String) {
 	 *
 	 * @return The product of the number of ways to win each race.
 	 */
-	fun solvePart1(): Int = parseInput().map(Race::countWins).reduce(Int::times)
+	fun solvePart1() = parseInput().map(Race::countWins).reduce(Int::times)
 
 	/**
 	 * Solves Part 2 of the puzzle by calculating the number of ways to win a single, combined race.
 	 *
 	 * @return The number of ways to win the combined race.
 	 */
-	fun solvePart2(): Int = File(filePath).useLines { lines ->
+	fun solvePart2() = File(filePath).useLines { lines ->
 		val (duration, record) = lines.map { it.substringAfter(":").replace(" +".toRegex(), "").toLong() }
 			.toList()
 		Race(duration, record).countWins()
@@ -63,7 +63,7 @@ data class Race(val duration: Long, val record: Long) {
 	 *
 	 * @return The number of ways to win the race.
 	 */
-	fun countWins(): Int = (0..duration).count { velocity ->
+	fun countWins() = (0..duration).count { velocity ->
 		(duration - velocity) * velocity > record
 	}
 }
