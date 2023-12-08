@@ -9,7 +9,7 @@ import java.io.File
  *
  * @property filePath The path to the input file containing the race data.
  */
-class Day6Solver(private val filePath: String) {
+class Day6(private val filePath: String) {
 	/**
 	 * Parses the input file to create a list of Race objects.
 	 *
@@ -72,7 +72,7 @@ data class Race(val duration: Long, val record: Long) {
  * Main function to run the solver for Day 6's puzzle.
  */
 fun main() {
-	val solver = Day6Solver("src/main/resources/day-6-input.txt")
+	val solver = Day6("src/main/resources/day-6-input.txt")
 	logger.info { "Number of ways to win (Part 1): ${solver.solvePart1()}" }
 	logger.info { "Number of ways to win (Part 2): ${solver.solvePart2()}" }
 }
