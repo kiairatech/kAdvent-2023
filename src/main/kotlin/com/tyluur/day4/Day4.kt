@@ -6,6 +6,9 @@ import java.io.File
  * Solver for Day 4 of the Advent of Code puzzle "Scratchcards".
  *
  * @property filePath The path to the input file containing scratchcard data.
+ *
+ * @author Tyluur <contact@tyluur.com>
+ * @since December 7th, 2023
  */
 class Day4(private val filePath: String) {
 
