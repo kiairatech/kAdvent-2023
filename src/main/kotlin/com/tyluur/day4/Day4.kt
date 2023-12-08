@@ -1,5 +1,6 @@
 package com.tyluur.day4
 
+import com.github.michaelbull.logging.InlineLogger
 import java.io.File
 
 /**
@@ -83,6 +84,10 @@ class Day4(private val filePath: String) {
  */
 fun main() {
 	val solver = Day4("src/main/resources/day-4-input.txt")
-	println("Total points (Part 1): ${solver.solvePart1()}")
-	println("Total scratchcards won (Part 2): ${solver.solvePart2()}")
+	logger.info { "Total points (Part 1): ${solver.solvePart1()}" }
+	logger.info { "Total scratchcards won (Part 2): ${solver.solvePart2()}" }
 }
+
+/** The instance of the logger for day 4 */
+private val logger = InlineLogger()
+
