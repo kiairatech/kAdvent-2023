@@ -58,9 +58,9 @@ object Day5 : Puzzle<Day5.Almanac>(5) {
 	 * @return The lowest location number for the initial seeds as a Long value.
 	 */
 	override fun solvePart1(input: Almanac): Any {
-		return input.seeds.map { seed ->
+		return input.seeds.minOfOrNull { seed ->
 			convertThroughMaps(seed, input.maps)
-		}.minOrNull() ?: Long.MAX_VALUE
+		} ?: Long.MAX_VALUE
 	}
 
 	/**
