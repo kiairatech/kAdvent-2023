@@ -1,0 +1,1 @@
+rootProject.name = "kAdvent-2023"
