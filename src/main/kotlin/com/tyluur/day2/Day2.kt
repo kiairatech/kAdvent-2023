@@ -1,22 +1,63 @@
 package com.tyluur.day2
 
 import com.github.michaelbull.logging.InlineLogger
-import java.io.File
+import com.tyluur.Puzzle
 
 /**
- * Main function for solving Advent of Code 2023, Day 2 puzzles.
+ * Class representing the Day 2 puzzle for Advent of Code 2023.
+ * It includes methods to parse game data and solve the puzzle for each part.
  */
-fun main() {
-	val filePath = "src/main/resources/day-2-input.txt" // Path to the input file
-	val games = parseGames(filePath)
+object Day2 : Puzzle<List<Game>>(2) {
 
-	// Part 1: Sum of IDs of feasible games
-	val feasibleGamesSum = games.filter { it.isFeasible(12, 13, 14) }.sumOf { it.id }
-	logger.info { "Sum of IDs of feasible games: $feasibleGamesSum" }
+	/**
+	 * Parses the input data into a list of Game objects.
+	 *
+	 * @param input The input data as a sequence of strings.
+	 * @return A list of Game objects.
+	 */
+	override fun parse(input: Sequence<String>): List<Game> {
+		return input.map { line ->
+			val parts = line.split(": ")
+			val id = parts[0].removePrefix("Game ").toInt()
+			val subsets = parts[1].split("; ").map { parseSubset(it) }
+			Game(id, subsets)
+		}.toList()
+	}
 
-	// Part 2: Sum of the power of minimum sets
-	val totalPowerSum = games.sumOf { it.calculatePower() }
-	logger.info { "Sum of the power of minimum sets: $totalPowerSum" }
+	/**
+	 * Solves Part 1 of the Day 2 puzzle.
+	 * Determines the sum of IDs of games feasible with specific cube limits.
+	 *
+	 * @param input The parsed list of Game objects.
+	 * @return The sum of IDs of feasible games.
+	 */
+	override fun solvePart1(input: List<Game>): Any {
+		return input.filter { it.isFeasible(12, 13, 14) }.sumOf { it.id }
+	}
+
+	/**
+	 * Solves Part 2 of the Day 2 puzzle.
+	 * Calculates the sum of the power of minimum sets of cubes required for each game.
+	 *
+	 * @param input The parsed list of Game objects.
+	 * @return The sum of the power of minimum sets.
+	 */
+	override fun solvePart2(input: List<Game>): Any {
+		return input.sumOf { it.calculatePower() }
+	}
+
+	/**
+	 * Parses a subset of cubes from a string into a map.
+	 *
+	 * @param subset The string representation of a subset of cubes.
+	 * @return A map representing the count of each color of cubes.
+	 */
+	private fun parseSubset(subset: String): Map<String, Int> {
+		return subset.split(", ").associate { colorCount ->
+			val (count, color) = colorCount.split(" ")
+			color to count.toInt()
+		}
+	}
 }
 
 /**
@@ -45,8 +86,9 @@ data class Game(val id: Int, val subsets: List<Map<String, Int>>) {
 
 	/**
 	 * Calculates the power of the minimum set of cubes required for the game.
+	 * The power is defined as the product of the minimum number of each color of cubes required.
 	 *
-	 * @return The product of the minimum number of red, green, and blue cubes.
+	 * @return The power of the minimum set of cubes.
 	 */
 	fun calculatePower(): Int {
 		val minRed = subsets.maxOfOrNull { it.getOrDefault("red", 0) } ?: 0
@@ -54,39 +96,6 @@ data class Game(val id: Int, val subsets: List<Map<String, Int>>) {
 		val minBlue = subsets.maxOfOrNull { it.getOrDefault("blue", 0) } ?: 0
 		return minRed * minGreen * minBlue
 	}
-}
-
-/**
- * Parses the game data from a file.
- *
- * @param filePath The path to the file containing game data.
- * @return A list of [Game] objects parsed from the file.
- */
-fun parseGames(filePath: String): List<Game> {
-	val games = mutableListOf<Game>()
-	File(filePath).forEachLine { line ->
-		val parts = line.split(": ")
-		val id = parts[0].removePrefix("Game ").toInt()
-		val subsets = parts[1].split("; ").map { parseSubset(it) }
-		games.add(Game(id, subsets))
-	}
-	return games
-}
-
-/**
- * Parses a subset of cubes from a string.
- *
- * @param subset The string representation of a subset.
- * @return A map of cube colors to their counts.
- */
-fun parseSubset(subset: String): Map<String, Int> {
-	val counts = mutableMapOf<String, Int>()
-	val colorCounts = subset.split(", ")
-	for (colorCount in colorCounts) {
-		val (count, color) = colorCount.split(" ")
-		counts[color] = count.toInt()
-	}
-	return counts
 }
 
 /** Logger for logging information. */
