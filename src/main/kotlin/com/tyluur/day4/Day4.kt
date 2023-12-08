@@ -1,93 +1,92 @@
 package com.tyluur.day4
 
-import com.github.michaelbull.logging.InlineLogger
-import java.io.File
+import com.tyluur.Puzzle
 
 /**
  * Solver for Day 4 of the Advent of Code puzzle "Scratchcards".
  *
  * @property filePath The path to the input file containing scratchcard data.
- *
- * @author Tyluur <contact@tyluur.com>
- * @since December 7th, 2023
  */
-class Day4(private val filePath: String) {
-
+object Day4 : Puzzle<List<Scratchcard>>(4) {
 	/**
-	 * Lazy-loaded list of scratchcards parsed from the input file.
-	 */
-	private val scratchcards: List<Scratchcard> by lazy { parseScratchcards() }
-
-	/**
-	 * Parses the input file to create a list of scratchcards.
+	 * Parses the input data for the puzzle.
 	 *
-	 * @return A list of [Scratchcard] objects representing each line in the input file.
+	 * @param input The input data as a sequence of strings.
+	 * @return A list of [Scratchcard] objects representing each line in the input data.
 	 */
-	private fun parseScratchcards(): List<Scratchcard> {
-		return File(filePath).readLines().map { line ->
-			// Splitting the line into parts and then extracting winning and owned numbers
-			val parts = line.split(": ", " | ")
-			val winningNumbers = parts[1].split(" ").filter { it.isNotEmpty() }.map(String::toInt).toSet()
-			val ownedNumbers = parts[2].split(" ").filter { it.isNotEmpty() }.map(String::toInt).toSet()
-			Scratchcard(winningNumbers, ownedNumbers)
-		}
+	override fun parse(input: Sequence<String>): List<Scratchcard> {
+		return input.map(Scratchcard::parse).toList()
 	}
 
 	/**
 	 * Solves Part 1 of the puzzle.
 	 *
+	 * @param input The list of [Scratchcard] objects parsed from the input data.
 	 * @return The total points calculated from all scratchcards.
 	 */
-	fun solvePart1(): Int {
-		return scratchcards.sumOf { it.calculatePoints() }
+	override fun solvePart1(input: List<Scratchcard>): Int {
+		return input.sumOf { it.calculatePoints() }
 	}
 
 	/**
 	 * Solves Part 2 of the puzzle.
 	 *
+	 * @param input The list of [Scratchcard] objects parsed from the input data.
 	 * @return The total number of scratchcards won, including originals and copies.
 	 */
-	fun solvePart2(): Int {
-		val counts = MutableList(scratchcards.size) { 1 }
-		for ((index, card) in scratchcards.withIndex()) {
-			repeat(card.winningNumbersCount) { offset ->
-				if (index + offset + 1 < scratchcards.size) {
+	override fun solvePart2(input: List<Scratchcard>): Int {
+		val counts = MutableList(input.size) { 1 }
+		for ((index, card) in input.withIndex()) {
+			repeat(card.winningNumbersCount()) { offset ->
+				if (index + offset + 1 < input.size) {
 					counts[index + offset + 1] += counts[index]
 				}
 			}
 		}
 		return counts.sum()
 	}
-
-	/**
-	 * Data class representing a scratchcard with winning numbers and owned numbers.
-	 *
-	 * @property winningNumbers Set of integers representing winning numbers.
-	 * @property ownedNumbers Set of integers representing the numbers you own.
-	 */
-	data class Scratchcard(val winningNumbers: Set<Int>, val ownedNumbers: Set<Int>) {
-		val winningNumbersCount: Int = winningNumbers.intersect(ownedNumbers).size
-
-		/**
-		 * Calculates the points for this scratchcard based on the number of matching numbers.
-		 *
-		 * @return The calculated points.
-		 */
-		fun calculatePoints(): Int {
-			return 1.shl(winningNumbersCount).coerceAtLeast(1) - 1
-		}
-	}
 }
 
 /**
- * Main function for solving Advent of Code 2023, Day 4 puzzles.
+ * Data class representing a scratchcard with winning numbers and owned numbers.
+ *
+ * @property winningNumbers Set of integers representing winning numbers.
+ * @property ownedNumbers Set of integers representing the numbers you own.
  */
-fun main() {
-	val solver = Day4("src/main/resources/day-4-input.txt")
-	logger.info { "Total points (Part 1): ${solver.solvePart1()}" }
-	logger.info { "Total scratchcards won (Part 2): ${solver.solvePart2()}" }
+data class Scratchcard(val winningNumbers: Set<Int>, val ownedNumbers: Set<Int>) {
+	/**
+	 * Calculates the points for this scratchcard based on the number of matching numbers.
+	 *
+	 * @return The calculated points.
+	 */
+	fun calculatePoints(): Int {
+		return 1.shl(winningNumbersCount()).coerceAtLeast(1) - 1
+	}
+
+	/**
+	 * Calculates the count of winning numbers that match the owned numbers.
+	 *
+	 * @return The count of matching winning numbers.
+	 */
+	fun winningNumbersCount(): Int {
+		return winningNumbers.intersect(ownedNumbers).size
+	}
+
+	/**
+	 * Companion object containing functions for parsing scratchcards from strings.
+	 */
+	companion object {
+		/**
+		 * Parses a scratchcard from a string representation.
+		 *
+		 * @param s The string representing the scratchcard.
+		 * @return The parsed [Scratchcard] object.
+		 */
+		fun parse(s: String): Scratchcard {
+			val parts = s.split(": ", " | ")
+			val winningNumbers = parts[1].split(" ").filter { it.isNotEmpty() }.map(String::toInt).toSet()
+			val ownedNumbers = parts[2].split(" ").filter { it.isNotEmpty() }.map(String::toInt).toSet()
+			return Scratchcard(winningNumbers, ownedNumbers)
+		}
+	}
 }
-
-/** The instance of the logger for day 4 */
-private val logger = InlineLogger()
-
