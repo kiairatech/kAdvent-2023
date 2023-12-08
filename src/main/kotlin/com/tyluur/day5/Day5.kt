@@ -9,7 +9,7 @@ import java.io.File
  *
  * @property filePath Path to the input file containing the puzzle data.
  */
-class Day5Solver(private val filePath: String) {
+class Day5(private val filePath: String) {
 
 	/**
 	 * Lazy-initialized Almanac object representing the parsed input data.
@@ -113,7 +113,7 @@ class Day5Solver(private val filePath: String) {
 }
 
 fun main() {
-	val solver = Day5Solver("path/to/day-5-input.txt")
+	val solver = Day5("path/to/day-5-input.txt")
 	logger.info { "Lowest location number (Part 1): ${solver.solvePart1()}" }
 	logger.info { "Lowest location number (Part 2): ${solver.solvePart2()}" }
 }
