@@ -9,6 +9,7 @@ import com.tyluur.day5.Day5
 import com.tyluur.day6.Day6
 import com.tyluur.day7.Day7
 import com.tyluur.day8.Day8
+import com.tyluur.day9.Day9
 import kotlin.time.Duration
 import kotlin.time.measureTimedValue
 
@@ -21,7 +22,7 @@ import kotlin.time.measureTimedValue
 fun main(args: Array<String>) {
 	// List of all puzzle objects for each day.
 	val puzzles = mutableListOf<Puzzle<*>>(
-		Day1, Day2, Day3, Day4, Day5, Day6, Day7, Day8
+		Day1, Day2, Day3, Day4, Day5, Day6, Day7, Day8, Day9
 	)
 
 	// If a specific day is provided in the command line arguments, filter to run only that day's puzzle.
