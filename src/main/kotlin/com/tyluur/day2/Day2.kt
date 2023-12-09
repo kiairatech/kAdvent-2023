@@ -6,6 +6,9 @@ import com.tyluur.Puzzle
 /**
  * Class representing the Day 2 puzzle for Advent of Code 2023.
  * It includes methods to parse game data and solve the puzzle for each part.
+ *
+ * @author Tyluur
+ * @since December 8th, 2023
  */
 object Day2 : Puzzle<List<Game>>(2) {
 
