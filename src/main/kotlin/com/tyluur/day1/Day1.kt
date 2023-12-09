@@ -81,16 +81,3 @@ object Day1 : Puzzle<List<String>>(1) {
 	private fun replaceSpelledOutNumbers(line: String): String =
 		numberMapping.entries.fold(line) { acc, (word, digit) -> acc.replace(word, digit) }
 }
-
-/**
- * The main method of this class
- */
-fun main() {
-	val totalCalibrationValuePart1 = Day1.solvePart1(Day1.parse())
-	val totalCalibrationValuePart2 = Day1.solvePart2(Day1.parse())
-	println("Total Calibration Value (Part 1): $totalCalibrationValuePart1")
-	println("Total Calibration Value (Part 2): $totalCalibrationValuePart2")
-}
-
-/** The instance of the logger for this class */
-private val logger = InlineLogger()
