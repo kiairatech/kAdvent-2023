@@ -7,6 +7,9 @@ import com.tyluur.Puzzle
  * This object extends the Puzzle class and is tasked with parsing an almanac to determine
  * the lowest location number corresponding to given seed numbers, addressing both part 1 and part 2
  * of the challenge.
+ *
+ * @author Tyluur
+ * @since December 8th, 2023
  */
 object Day5 : Puzzle<Day5.Almanac>(5) {
 

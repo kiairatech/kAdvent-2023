@@ -10,6 +10,9 @@ import com.tyluur.Puzzle
  * navigating through a network of nodes based on a sequence of left/right instructions.
  * Part 1 focuses on reaching a specific node, while Part 2 involves simultaneous
  * navigation from multiple starting nodes.
+ *
+ * @author Tyluur
+ * @since December 8th, 2023
  */
 object Day8 : Puzzle<Pair<List<Char>, Map<String, Pair<String, String>>>>(8) {
 

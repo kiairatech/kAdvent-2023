@@ -6,6 +6,9 @@ import com.tyluur.Puzzle
  * Solver for Day 4 of the Advent of Code puzzle "Scratchcards".
  *
  * @property filePath The path to the input file containing scratchcard data.
+ *
+ * @author Tyluur
+ * @since December 8th, 2023
  */
 object Day4 : Puzzle<List<Scratchcard>>(4) {
 	/**

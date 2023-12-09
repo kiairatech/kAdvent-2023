@@ -65,6 +65,9 @@ object Day2 : Puzzle<List<Game>>(2) {
  *
  * @param id The unique identifier of the game.
  * @param subsets The list of subsets of cubes revealed in each game.
+ *
+ * @author Tyluur
+ * @since December 8th, 2023
  */
 data class Game(val id: Int, val subsets: List<Map<String, Int>>) {
 

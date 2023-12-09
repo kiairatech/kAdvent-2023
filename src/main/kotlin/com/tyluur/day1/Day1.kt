@@ -7,6 +7,9 @@ import com.tyluur.Puzzle
  * The Day 1 puzzle solution for Advent of Code 2023.
  * The puzzle involves calculating calibration values from a list of strings.
  * Part 1 calculates these directly, while Part 2 includes converting spelled-out numbers to digits.
+ *
+ * @author Tyluur
+ * @since December 8th, 2023
  */
 object Day1 : Puzzle<List<String>>(1) {
 

@@ -5,6 +5,9 @@ import com.tyluur.Puzzle
 /**
  * Solver for the Day 6 Advent of Code puzzle, "Wait For It".
  * Calculates the number of ways to win toy boat races based on their duration and record distances.
+ *
+ * @author Tyluur
+ * @since December 8th, 2023
  */
 object Day6 : Puzzle<List<Race>>(6) {
 	/**

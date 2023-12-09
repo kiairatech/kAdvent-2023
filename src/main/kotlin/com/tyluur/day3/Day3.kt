@@ -4,6 +4,9 @@ import com.tyluur.Puzzle
 
 /**
  * Day 3 puzzle solution.
+ *
+ * @author Tyluur
+ * @since December 8th, 2023
  */
 object Day3 : Puzzle<Array<IntArray>>(3) {
 	override fun parse(input: Sequence<String>): Array<IntArray> {
