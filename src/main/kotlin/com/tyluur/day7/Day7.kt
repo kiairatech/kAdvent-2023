@@ -72,7 +72,7 @@ object Day7 : Puzzle<List<Day7.Hand>>(7) {
 	 */
 	data class Hand(val cards: String, val bid: Int, val adjustForPart2: Boolean) {
 		val totalValue: String by lazy {
-			var cardsValue = cards.map {
+			val cardsValue = cards.map {
 				if (adjustForPart2) weights2.indexOf(it).toString(16)
 				else weights.indexOf(it).toString(16)
 			}.joinToString("")
@@ -80,7 +80,7 @@ object Day7 : Puzzle<List<Day7.Hand>>(7) {
 			if (adjustForPart2 && cards.contains('J')) {
 				val maxTypeValue = replacements.map { r ->
 					getTypeValue(cards.replace('J', r))
-				}.maxOrNull() ?: throw IllegalStateException("Max type value not found")
+				}.max()
 				return@lazy maxTypeValue.toString() + cardsValue
 			}
 			getTypeValue(cards).toString() + cardsValue
