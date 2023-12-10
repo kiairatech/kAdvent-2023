@@ -1,6 +1,17 @@
 package com.tyluur.day10
 
+/**
+ * Represents a grid where each cell is a Boolean value.
+ * This grid is used to represent a larger version of the maze, where each cell indicates
+ * whether it is part of the path (true) or not (false).
+ */
 typealias Grid = List<List<Boolean>>
+
+/**
+ * Represents the states of each cell in a grid.
+ * This mutable grid stores state information for each cell, such as whether a cell is
+ * unexplored (0), enclosed (1), or leads to an escape from the maze (-1).
+ */
 typealias CellStates = MutableList<MutableList<Long>>
 
 /**
