@@ -11,6 +11,7 @@ import com.tyluur.day9.Day9.number
  * of integers.
  *
  * @property number The day number of the puzzle, which is 9.
+ *
  * @author Tyluur <contact@tyluur.com>
  * @since December 9th, 2023
  */

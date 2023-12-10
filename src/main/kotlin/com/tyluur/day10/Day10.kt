@@ -8,6 +8,9 @@ import com.tyluur.Puzzle
  * This object inherits from the Puzzle class, providing implementations specific
  * to solving both parts of the Day 10 puzzle. It uses the PipeMazeSolver class
  * to analyze a maze of pipes and find solutions based on the maze's structure.
+ *
+ * @author Tyluur <contact@tyluur.com>
+ * @since December 9th, 2023
  */
 object Day10 : Puzzle<PipeMazeSolver>(10) {
 
