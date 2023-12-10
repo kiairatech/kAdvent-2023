@@ -1,12 +1,38 @@
 package com.tyluur.day10
 
+typealias Grid = List<List<Boolean>>
+typealias CellStates = MutableList<MutableList<Long>>
+
+/**
+ * Class that solves the pipe maze puzzle.
+ *
+ * This class provides functionality to analyze a grid of characters representing a maze of pipes
+ * and compute different aspects of the maze, such as the number of steps to complete a loop and
+ * the number of enclosed areas within the maze.
+ *
+ * @property grid The grid representing the pipe maze, where each string is a row in the grid.
+ */
 class PipeMazeSolver(private val grid: List<String>) {
 
 	companion object {
+
+		/**
+		 * Directions for navigation represented as North, East, South, and West.
+		 */
+		private val dirs = listOf(listOf(0, -1), listOf(1, 0), listOf(0, 1), listOf(-1, 0))
+
+		/**
+		 * Factory method to create an instance of PipeMazeSolver from input strings.
+		 *
+		 * @param input A list of strings representing the puzzle input.
+		 * @return An instance of PipeMazeSolver based on the provided input.
+		 */
 		fun fromInput(input: List<String>): PipeMazeSolver = PipeMazeSolver(input)
 	}
 
-	private val dirs = listOf(listOf(0, -1), listOf(1, 0), listOf(0, 1), listOf(-1, 0))
+	/**
+	 * Map defining the options for each type of pipe character.
+	 */
 	private val options = mapOf(
 		'|' to listOf(true, false, true, false),
 		'-' to listOf(false, true, false, true),
@@ -18,6 +44,11 @@ class PipeMazeSolver(private val grid: List<String>) {
 		'S' to listOf(true, true, true, true)
 	)
 
+	/**
+	 * Calculates the number of steps required to complete the loop in the pipe maze.
+	 *
+	 * @return The number of steps to complete the loop in the pipe maze.
+	 */
 	fun countSteps(): Int {
 		val startY = grid.indexOfFirst { it.contains('S') }
 		val startX = grid[startY].indexOf('S')
@@ -44,6 +75,11 @@ class PipeMazeSolver(private val grid: List<String>) {
 		return steps / 2
 	}
 
+	/**
+	 * Determines the number of tiles that are enclosed within the main loop of the pipe maze.
+	 *
+	 * @return The number of tiles enclosed within the loop of the pipe maze.
+	 */
 	fun countEnclosed(): Int {
 		val bigGrid = MutableList(grid.size * 2) { MutableList(grid[0].length * 2) { false } }
 		var (x, y) = findStart()
@@ -87,37 +123,48 @@ class PipeMazeSolver(private val grid: List<String>) {
 		return enclosedCount
 	}
 
+	/**
+	 * Finds the starting position of 'S' in the grid.
+	 *
+	 * @return A Pair of integers representing the x and y coordinates of the start position.
+	 */
 	private fun findStart(): Pair<Int, Int> {
 		val startY = grid.indexOfFirst { it.contains('S') }
 		val startX = grid[startY].indexOf('S')
 		return Pair(startX, startY)
 	}
 
-	fun isEnclosed(x: ll, y: ll, grid: Grid, cellStates: CellStates): Boolean {
+	/**
+	 * Checks if the cell at the specified coordinates is enclosed within the maze.
+	 *
+	 * @param x The x-coordinate of the cell.
+	 * @param y The y-coordinate of the cell.
+	 * @param grid The grid representing the pipe maze.
+	 * @param cellStates A mutable list representing the state of each cell in the grid.
+	 * @return True if the cell is enclosed, False otherwise.
+	 */
+	private fun isEnclosed(x: Long, y: Long, grid: Grid, cellStates: CellStates): Boolean {
 		// BFS
 		var todo = mutableListOf(listOf(x, y))
 		val visited = MutableList(grid.size) { MutableList(grid[0].size) { false } }
 		visited[y.toInt()][x.toInt()] = true
 		while (todo.isNotEmpty()) {
-			val newTodo = mutableListOf<List<ll>>()
+			val newTodo = mutableListOf<List<Long>>()
 			for (pos in todo) {
 				for (d in 0 until 4) {
-					val nx = pos[0] + DIRS[d][0]
-					val ny = pos[1] + DIRS[d][1]
+					val nx = pos[0] + dirs[d][0]
+					val ny = pos[1] + dirs[d][1]
 					if (!(nx in 0 until grid[0].size && ny in 0 until grid.size)) {
 						for (i in visited.indices) {
 							for (j in visited[0].indices) {
-								if (visited[i][j])
-									cellStates[i][j] = -1
+								if (visited[i][j]) cellStates[i][j] = -1
 							}
 						}
 						return false // found a way to escape
 					}
 
-					if (cellStates[ny.toInt()][nx.toInt()] == 1L)
-						return true
-					else if (cellStates[ny.toInt()][nx.toInt()] == -1L)
-						return false
+					if (cellStates[ny.toInt()][nx.toInt()] == 1L) return true
+					else if (cellStates[ny.toInt()][nx.toInt()] == -1L) return false
 
 					if (!visited[ny.toInt()][nx.toInt()] && !grid[ny.toInt()][nx.toInt()]) {
 						newTodo.add(listOf(nx, ny))
@@ -129,8 +176,7 @@ class PipeMazeSolver(private val grid: List<String>) {
 		}
 		for (i in visited.indices) {
 			for (j in visited[0].indices) {
-				if (visited[i][j])
-					cellStates[i][j] = 1
+				if (visited[i][j]) cellStates[i][j] = 1
 			}
 		}
 		return true
