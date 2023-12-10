@@ -39,7 +39,7 @@ object Day9 : Puzzle<List<List<Int>>>(9) {
 	 * @return The solution to Part 1 of the puzzle.
 	 */
 	override fun solvePart1(input: List<List<Int>>): Int {
-		return input.sumOf { calculateNextValue(it) }
+		return input.sumOf { calculateValue(it, true) }
 	}
 
 	/**
@@ -51,71 +51,34 @@ object Day9 : Puzzle<List<List<Int>>>(9) {
 	 * @return The solution to Part 2 of the puzzle.
 	 */
 	override fun solvePart2(input: List<List<Int>>): Int {
-		return input.sumOf { calculatePreviousValue(it) }
+		return input.sumOf { calculateValue(it, false) }
 	}
 
-	/**
-	 * Calculates the next value in a series based on the difference method.
-	 *
-	 * It generates sequences of differences until all differences are zero,
-	 * then extrapolates the next value.
-	 *
-	 * @param history The series of historical values.
-	 * @return The next extrapolated value.
-	 */
-	private fun calculateNextValue(history: List<Int>): Int {
-		val sequences = mutableListOf(history.toMutableList())
+	private fun calculateValue(history: List<Int>, calculateNext: Boolean): Int {
+		return calculate(history, mutableListOf(history.toMutableList()), calculateNext)
+	}
 
-		// Generate sequences of differences
-		while (true) {
+	private tailrec fun calculate(
+		history: List<Int>,
+		sequences: MutableList<MutableList<Int>>,
+		calculateNext: Boolean
+	): Int {
+		if (sequences.last().all { it == 0 }) {
+			for (i in sequences.size - 2 downTo 0) {
+				val nextValue = if (calculateNext) {
+					sequences[i].last() + sequences[i + 1].last()
+				} else {
+					sequences[i].first() - sequences[i + 1].first()
+				}
+				if (calculateNext) sequences[i].add(nextValue) else sequences[i].add(0, nextValue)
+			}
+			return if (calculateNext) sequences[0].last() else sequences[0].first()
+		} else {
 			val newSequence = (0 until sequences.last().size - 1).map { i ->
 				sequences.last()[i + 1] - sequences.last()[i]
 			}.toMutableList()
-
 			sequences.add(newSequence)
-
-			// Break if all differences are zero
-			if (newSequence.all { it == 0 }) break
+			return calculate(history, sequences, calculateNext)
 		}
-
-		// Extrapolate the next value
-		for (i in sequences.size - 2 downTo 0) {
-			sequences[i].add(sequences[i].last() + sequences[i + 1].last())
-		}
-
-		// The next value is the last element of the first sequence
-		return sequences[0].last()
-	}
-
-	/**
-	 * Calculates the previous value in a series based on the difference method.
-	 *
-	 * Similar to calculateNextValue, but extrapolates backwards.
-	 *
-	 * @param history The series of historical values.
-	 * @return The previous extrapolated value.
-	 */
-	private fun calculatePreviousValue(history: List<Int>): Int {
-		val sequences = mutableListOf(history.toMutableList())
-
-		// Generate sequences of differences
-		while (true) {
-			val newSequence = (0 until sequences.last().size - 1).map { i ->
-				sequences.last()[i + 1] - sequences.last()[i]
-			}.toMutableList()
-
-			sequences.add(newSequence)
-
-			// Break if all differences are zero
-			if (newSequence.all { it == 0 }) break
-		}
-
-		// Extrapolate the previous value
-		for (i in sequences.size - 2 downTo 0) {
-			sequences[i].add(0, sequences[i].first() - sequences[i + 1].first())
-		}
-
-		// The previous value is the first element of the first sequence
-		return sequences[0].first()
 	}
 }
