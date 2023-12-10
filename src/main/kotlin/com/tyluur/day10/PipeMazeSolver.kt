@@ -2,6 +2,10 @@ package com.tyluur.day10
 
 class PipeMazeSolver(private val grid: List<String>) {
 
+	companion object {
+		fun fromInput(input: List<String>): PipeMazeSolver = PipeMazeSolver(input)
+	}
+
 	private val dirs = listOf(listOf(0, -1), listOf(1, 0), listOf(0, 1), listOf(-1, 0))
 	private val options = mapOf(
 		'|' to listOf(true, false, true, false),
@@ -13,10 +17,6 @@ class PipeMazeSolver(private val grid: List<String>) {
 		'.' to listOf(false, false, false, false),
 		'S' to listOf(true, true, true, true)
 	)
-
-	companion object {
-		fun fromInput(input: List<String>): PipeMazeSolver = PipeMazeSolver(input)
-	}
 
 	fun countSteps(): Int {
 		val startY = grid.indexOfFirst { it.contains('S') }
@@ -42,6 +42,98 @@ class PipeMazeSolver(private val grid: List<String>) {
 			if (x == startX && y == startY) break
 		}
 		return steps / 2
+	}
+
+	fun countEnclosed(): Int {
+		val bigGrid = MutableList(grid.size * 2) { MutableList(grid[0].length * 2) { false } }
+		var (x, y) = findStart()
+		var lastD = -1L
+
+		while (true) {
+			for (d in dirs.indices) {
+				if (d.toLong() == (lastD + 2) % 4) continue
+
+				val nx = x + dirs[d][0]
+				val ny = y + dirs[d][1]
+				if (nx !in grid[0].indices || ny !in grid.indices) continue
+
+				if (options[grid[y][x]]!![d] && options[grid[ny][nx]]!![(d + 2) % 4]) {
+					bigGrid[y * 2][x * 2] = true
+					bigGrid[y * 2 + dirs[d][1]][x * 2 + dirs[d][0]] = true
+					x = nx
+					y = ny
+					lastD = d.toLong()
+					break
+				}
+			}
+			if (x == findStart().first && y == findStart().second) break
+		}
+
+		val cellStates = MutableList(bigGrid.size) { MutableList(bigGrid[0].size) { 0L } }
+		var enclosedCount = 0
+		for (originalY in grid.indices) {
+			for (originalX in grid[0].indices) {
+				val cellX = originalX * 2
+				val cellY = originalY * 2
+
+				if (!bigGrid[cellY][cellX]) {
+					if (isEnclosed(cellX.toLong(), cellY.toLong(), bigGrid, cellStates)) {
+						enclosedCount++
+					}
+				}
+			}
+		}
+
+		return enclosedCount
+	}
+
+	private fun findStart(): Pair<Int, Int> {
+		val startY = grid.indexOfFirst { it.contains('S') }
+		val startX = grid[startY].indexOf('S')
+		return Pair(startX, startY)
+	}
+
+	fun isEnclosed(x: ll, y: ll, grid: Grid, cellStates: CellStates): Boolean {
+		// BFS
+		var todo = mutableListOf(listOf(x, y))
+		val visited = MutableList(grid.size) { MutableList(grid[0].size) { false } }
+		visited[y.toInt()][x.toInt()] = true
+		while (todo.isNotEmpty()) {
+			val newTodo = mutableListOf<List<ll>>()
+			for (pos in todo) {
+				for (d in 0 until 4) {
+					val nx = pos[0] + DIRS[d][0]
+					val ny = pos[1] + DIRS[d][1]
+					if (!(nx in 0 until grid[0].size && ny in 0 until grid.size)) {
+						for (i in visited.indices) {
+							for (j in visited[0].indices) {
+								if (visited[i][j])
+									cellStates[i][j] = -1
+							}
+						}
+						return false // found a way to escape
+					}
+
+					if (cellStates[ny.toInt()][nx.toInt()] == 1L)
+						return true
+					else if (cellStates[ny.toInt()][nx.toInt()] == -1L)
+						return false
+
+					if (!visited[ny.toInt()][nx.toInt()] && !grid[ny.toInt()][nx.toInt()]) {
+						newTodo.add(listOf(nx, ny))
+						visited[ny.toInt()][nx.toInt()] = true
+					}
+				}
+			}
+			todo = newTodo
+		}
+		for (i in visited.indices) {
+			for (j in visited[0].indices) {
+				if (visited[i][j])
+					cellStates[i][j] = 1
+			}
+		}
+		return true
 	}
 
 }
