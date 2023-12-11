@@ -10,6 +10,9 @@ import kotlin.math.sqrt
  *
  * This class extends the Puzzle class, providing implementations for parsing the input
  * and solving the two parts of the puzzle.
+ *
+ * @author Tyluur <contact@tyluur.com>
+ * @since December 11th, 2023
  */
 object Day6 : Puzzle<List<Race>>(6) {
 
