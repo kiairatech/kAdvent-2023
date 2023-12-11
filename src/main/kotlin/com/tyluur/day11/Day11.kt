@@ -5,9 +5,9 @@ import kotlin.math.abs
 
 /**
  * Solution object for Day 11 puzzle of Advent of Code 2023.
- * This object inherits from the abstract `Puzzle` class with a List<List<Char>> data type.
  *
- * @see Puzzle
+ * @author Tyluur <contact@tyluur.com>
+ * @since December 11th, 2023
  */
 object Day11 : Puzzle<List<List<Char>>>(11) {
 
