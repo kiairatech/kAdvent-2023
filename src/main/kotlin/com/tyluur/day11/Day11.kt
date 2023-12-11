@@ -112,10 +112,3 @@ object Day11 : Puzzle<List<List<Char>>>(11) {
 		}.sum() / 2L  // Each pair is counted twice, so divide by 2
 	}
 }
-
-fun main() {
-	val puzzle = Day11
-	val input = puzzle.parse()
-	println("Part 1: ${puzzle.solvePart1(input)}")
-	println("Part 2: ${puzzle.solvePart2(input)}")
-}
