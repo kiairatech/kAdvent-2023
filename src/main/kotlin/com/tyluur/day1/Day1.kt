@@ -1,6 +1,5 @@
 package com.tyluur.day1
 
-import com.github.michaelbull.logging.InlineLogger
 import com.tyluur.Puzzle
 
 /**
