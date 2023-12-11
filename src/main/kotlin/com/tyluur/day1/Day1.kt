@@ -8,7 +8,7 @@ import com.tyluur.Puzzle
  *
  * @constructor Creates a Day1 object with the puzzle number 1.
  *
- * @author Tyluur *
+ * @author Tyluur
  * @since December 10th, 2023
  */
 object Day1 : Puzzle<List<String>>(1) {
