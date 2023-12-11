@@ -1,95 +1,135 @@
 package com.tyluur.day4
 
 import com.tyluur.Puzzle
+import kotlin.math.pow
 
 /**
- * Solver for Day 4 of the Advent of Code puzzle "Scratchcards".
- *
- * @property filePath The path to the input file containing scratchcard data.
+ * Day 4 puzzle implementation.
  *
  * @author Tyluur
- * @since December 8th, 2023
+ * @since December 10th, 2023
  */
-object Day4 : Puzzle<List<Scratchcard>>(4) {
+object Day4 : Puzzle<List<String>>(4) {
+
 	/**
-	 * Parses the input data for the puzzle.
+	 * Parses the input data into a list of strings.
 	 *
 	 * @param input The input data as a sequence of strings.
-	 * @return A list of [Scratchcard] objects representing each line in the input data.
+	 * @return A list of strings.
 	 */
-	override fun parse(input: Sequence<String>): List<Scratchcard> {
-		return input.map(Scratchcard::parse).toList()
+	override fun parse(input: Sequence<String>): List<String> {
+		return input.toList()
 	}
 
 	/**
-	 * Solves Part 1 of the puzzle.
+	 * Solves part 1 of the puzzle.
 	 *
-	 * @param input The list of [Scratchcard] objects parsed from the input data.
-	 * @return The total points calculated from all scratchcards.
+	 * @param input The input data as a list of strings.
+	 * @return The solution for part 1 as an integer.
 	 */
-	override fun solvePart1(input: List<Scratchcard>): Int {
-		return input.sumOf { it.calculatePoints() }
+	override fun solvePart1(input: List<String>): Any {
+		var result = 0
+		val instances = IntArray(input.size) { 1 }
+
+		for (i in input.indices) {
+			val (winningNumbersLine, myNumbersLine) = parseLines(input[i])
+
+			val winningNumbers = findWinningNumbers(winningNumbersLine)
+			val myNumbers = myNumbersLine.split("\\s+".toRegex())
+
+			val count = countMatchingNumbers(winningNumbers, myNumbers)
+
+			updateInstances(i, count, instances)
+			if (count != 0) {
+				result += 2.0.pow((count - 1).toDouble()).toInt()
+			}
+		}
+
+		return result
 	}
 
 	/**
-	 * Solves Part 2 of the puzzle.
+	 * Solves part 2 of the puzzle.
 	 *
-	 * @param input The list of [Scratchcard] objects parsed from the input data.
-	 * @return The total number of scratchcards won, including originals and copies.
+	 * @param input The input data as a list of strings.
+	 * @return The solution for part 2 as an integer.
 	 */
-	override fun solvePart2(input: List<Scratchcard>): Int {
-		val counts = MutableList(input.size) { 1 }
-		for ((index, card) in input.withIndex()) {
-			repeat(card.winningNumbersCount()) { offset ->
-				if (index + offset + 1 < input.size) {
-					counts[index + offset + 1] += counts[index]
+	override fun solvePart2(input: List<String>): Any {
+		val instances = IntArray(input.size) { 1 }
+
+		for (i in input.indices) {
+			val (winningNumbersLine, myNumbersLine) = parseLines(input[i])
+
+			val winningNumbers = findWinningNumbers(winningNumbersLine)
+			val myNumbers = myNumbersLine.split("\\s+".toRegex())
+
+			val count = countMatchingNumbers(winningNumbers, myNumbers)
+
+			updateInstances(i, count, instances)
+		}
+
+		var result = 0
+		for (instance in instances) {
+			result += instance
+		}
+
+		return result
+	}
+
+	/**
+	 * Parses a line into a pair of strings.
+	 *
+	 * @param line The input line to parse.
+	 * @return A pair of strings.
+	 */
+	private fun parseLines(line: String): Pair<String, String> {
+		val temp = line.split(":[\\s]+".toRegex())[1].split("[\\s]+\\|[\\s]+".toRegex())
+		return Pair(temp[0], temp[1])
+	}
+
+	/**
+	 * Counts the number of matching numbers between two lists of strings.
+	 *
+	 * @param winningNumbers The list of winning numbers.
+	 * @param myNumbers The list of my numbers.
+	 * @return The count of matching numbers as an integer.
+	 */
+	private fun countMatchingNumbers(winningNumbers: List<String>, myNumbers: List<String>): Int {
+		var count = 0
+		for (myNumber in myNumbers) {
+			for (winningNumber in winningNumbers) {
+				if (myNumber == winningNumber) {
+					count++
+					break
 				}
 			}
 		}
-		return counts.sum()
+		return count
 	}
-}
 
-/**
- * Data class representing a scratchcard with winning numbers and owned numbers.
- *
- * @property winningNumbers Set of integers representing winning numbers.
- * @property ownedNumbers Set of integers representing the numbers you own.
- */
-data class Scratchcard(val winningNumbers: Set<Int>, val ownedNumbers: Set<Int>) {
 	/**
-	 * Calculates the points for this scratchcard based on the number of matching numbers.
+	 * Updates instances based on the index and count.
 	 *
-	 * @return The calculated points.
+	 * @param index The index to start updating from.
+	 * @param count The count of instances to update.
+	 * @param instances The array of instances to update.
 	 */
-	fun calculatePoints(): Int {
-		return 1.shl(winningNumbersCount()).coerceAtLeast(1) - 1
-	}
-
-	/**
-	 * Calculates the count of winning numbers that match the owned numbers.
-	 *
-	 * @return The count of matching winning numbers.
-	 */
-	fun winningNumbersCount(): Int {
-		return winningNumbers.intersect(ownedNumbers).size
-	}
-
-	/**
-	 * Companion object containing functions for parsing scratchcards from strings.
-	 */
-	companion object {
-		/**
-		 * Parses a scratchcard from a string representation.
-		 *
-		 * @param s The string representing the scratchcard.
-		 * @return The parsed [Scratchcard] object.
-		 */
-		fun parse(s: String): Scratchcard {
-			val parts = s.split(": ", " | ")
-			val winningNumbers = parts[1].split(" ").filter { it.isNotEmpty() }.map(String::toInt).toSet()
-			val ownedNumbers = parts[2].split(" ").filter { it.isNotEmpty() }.map(String::toInt).toSet()
-			return Scratchcard(winningNumbers, ownedNumbers)
+	private fun updateInstances(index: Int, count: Int, instances: IntArray) {
+		for (j in 0 until count) {
+			val cardToCopy = index + j + 1
+			if (cardToCopy < instances.size) {
+				instances[cardToCopy] += instances[index]
+			}
 		}
+	}
+
+	/**
+	 * Splits a winning numbers line into a list of strings.
+	 *
+	 * @param winningNumbersLine The winning numbers line to split.
+	 * @return A list of strings representing winning numbers.
+	 */
+	private fun findWinningNumbers(winningNumbersLine: String): List<String> {
+		return winningNumbersLine.split("\\s+".toRegex())
 	}
 }
