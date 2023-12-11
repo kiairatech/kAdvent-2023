@@ -6,73 +6,79 @@ import kotlin.math.floor
 import kotlin.math.sqrt
 
 /**
- * Object representing the solution for Day 6 of Advent of Code.
+ * Class responsible for solving the Day 6 puzzle of Advent of Code.
  *
- * This object extends the Puzzle class and provides specific implementations for parsing the input
- * and solving the two parts of the puzzle. The input data for this puzzle consists of race times
- * and record distances, represented as pairs of Long values.
- *
- * @author Tyluur
- * @since December 11th, 2023
+ * This class extends the Puzzle class, providing implementations for parsing the input
+ * and solving the two parts of the puzzle.
  */
-object Day6 : Puzzle<List<Pair<Long, Long>>>(6) {
+object Day6 : Puzzle<List<Race>>(6) {
 
 	/**
-	 * Parses the input data for the puzzle.
+	 * Parses a sequence of strings into a list of Race objects.
+	 * Assumes the first line contains race times and the second line contains records, separated by spaces.
 	 *
-	 * The input is a sequence of strings, where the first line contains race times and the second line
-	 * contains record distances. This method splits these lines, converts them to long values, and pairs
-	 * each race time with its corresponding record distance.
-	 *
-	 * @param input The input data as a sequence of strings.
-	 * @return A list of pairs, where each pair contains a race time and a record distance.
+	 * @param input The input sequence of strings.
+	 * @return A list of Race objects.
 	 */
-	override fun parse(input: Sequence<String>): List<Pair<Long, Long>> {
-		val lines = input.toList() // Convert sequence to list
+	override fun parse(input: Sequence<String>): List<Race> {
+		val lines = input.toList()
 		val raceTimes = lines[0].split("\\s+".toRegex()).drop(1).map { it.toLong() }
 		val records = lines[1].split("\\s+".toRegex()).drop(1).map { it.toLong() }
-		return raceTimes.zip(records)
+		return raceTimes.zip(records).map { Race(it.first, it.second) }
 	}
 
 	/**
-	 * Solves Part 1 of the puzzle.
+	 * Solves the first part of the puzzle.
+	 * Calculates the product of the number of ways to beat each race record.
 	 *
-	 * This method calculates the number of ways to beat the record for each race using the quadratic formula.
-	 * It iterates through each race, calculates potential roots for beating the record, and multiplies these
-	 * possibilities together to find the total number of ways.
-	 *
-	 * @param input The parsed input data, a list of pairs of race times and record distances.
-	 * @return The total number of ways to beat the records for all races.
+	 * @param input List of Race objects.
+	 * @return The product of ways to beat each race's record.
 	 */
-	override fun solvePart1(input: List<Pair<Long, Long>>): Long {
-		return input.fold(1L) { acc, (time, record) ->
-			val discriminantSqrt = sqrt(time.toDouble() * time - 4.0 * record)
-			var possibleRoot1 = floor((time + discriminantSqrt) / 2).toLong()
-			var possibleRoot2 = ceil((time - discriminantSqrt) / 2).toLong()
-			if (possibleRoot1 * (time - possibleRoot1) <= record) possibleRoot1--
-			if (possibleRoot2 * (time - possibleRoot2) <= record) possibleRoot2++
-			acc * (possibleRoot1 - possibleRoot2 + 1)
+	override fun solvePart1(input: List<Race>): Long {
+		return input.fold(1L) { acc, race ->
+			acc * calculateWaysToBeatRecord(race)
 		}
 	}
 
 	/**
-	 * Solves Part 2 of the puzzle.
+	 * Solves the second part of the puzzle.
+	 * Combines all races into one and calculates the ways to beat the combined race record.
 	 *
-	 * This method combines all race times and record distances into a single long race and a single record
-	 * and then calculates the number of ways to beat this combined record, similar to the approach in Part 1.
-	 *
-	 * @param input The parsed input data, a list of pairs of race times and record distances.
-	 * @return The number of ways to beat the record in the combined long race.
+	 * @param input List of Race objects.
+	 * @return The number of ways to beat the combined race record.
 	 */
-	override fun solvePart2(input: List<Pair<Long, Long>>): Long {
-		val combinedRaceTime = input.map { it.first }.joinToString("").toLong()
-		val combinedRecord = input.map { it.second }.joinToString("").toLong()
+	override fun solvePart2(input: List<Race>): Long {
+		val combinedRace = combineRaces(input)
+		return calculateWaysToBeatRecord(combinedRace)
+	}
 
-		val discriminantSqrt = sqrt(combinedRaceTime.toDouble() * combinedRaceTime - 4.0 * combinedRecord)
-		var possibleRoot1 = floor((combinedRaceTime + discriminantSqrt) / 2).toLong()
-		var possibleRoot2 = ceil((combinedRaceTime - discriminantSqrt) / 2).toLong()
-		if (possibleRoot1 * (combinedRaceTime - possibleRoot1) <= combinedRecord) possibleRoot1--
-		if (possibleRoot2 * (combinedRaceTime - possibleRoot2) <= combinedRecord) possibleRoot2++
+	/**
+	 * Calculates the number of ways to beat a race record.
+	 * Utilizes the quadratic equation to determine the range of possible solutions.
+	 *
+	 * @param race The Race object.
+	 * @return The number of ways to beat the race record.
+	 */
+	private fun calculateWaysToBeatRecord(race: Race): Long {
+		val (time, record) = race
+		val discriminantSqrt = sqrt(time.toDouble() * time - 4.0 * record)
+		var possibleRoot1 = floor((time + discriminantSqrt) / 2).toLong()
+		var possibleRoot2 = ceil((time - discriminantSqrt) / 2).toLong()
+		if (possibleRoot1 * (time - possibleRoot1) <= record) possibleRoot1--
+		if (possibleRoot2 * (time - possibleRoot2) <= record) possibleRoot2++
 		return possibleRoot1 - possibleRoot2 + 1
+	}
+
+	/**
+	 * Combines multiple races into a single race.
+	 * Concatenates the times and records of individual races.
+	 *
+	 * @param races The list of Race objects.
+	 * @return A combined Race object.
+	 */
+	private fun combineRaces(races: List<Race>): Race {
+		val combinedRaceTime = races.map { it.time }.joinToString("").toLong()
+		val combinedRecord = races.map { it.record }.joinToString("").toLong()
+		return Race(combinedRaceTime, combinedRecord)
 	}
 }
