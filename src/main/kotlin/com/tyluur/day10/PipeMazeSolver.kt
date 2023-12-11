@@ -135,7 +135,7 @@ class PipeMazeSolver(private val grid: List<String>) {
 				for (d in 0 until 4) {
 					val nx = pos[0] + dirs[d][0]
 					val ny = pos[1] + dirs[d][1]
-					if (!(nx in 0 until grid[0].size && ny in 0 until grid.size)) {
+					if (!(nx in 0 until grid[0].size && ny in grid.indices)) {
 						for (i in visited.indices) {
 							for (j in visited[0].indices) {
 								if (visited[i][j]) cellStates[i][j] = -1
