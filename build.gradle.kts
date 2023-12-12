@@ -19,7 +19,7 @@ repositories {
 }
 
 application {
-	mainClass.set("com.tyluur.Main")
+	mainClass.set("ca.kiaira.Main")
 }
 
 dependencies {
