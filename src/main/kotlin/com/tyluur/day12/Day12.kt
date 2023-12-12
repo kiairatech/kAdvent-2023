@@ -27,7 +27,7 @@ object Day12 : Puzzle<SpringConditionRecords>(12) {
 	 */
 	override fun parse(input: Sequence<String>): SpringConditionRecords {
 		val rows = input.toList()
-		val springConditions = rows.map { SpecificSpringCondition(it.split(" ")[0]) }
+		val springConditions = rows.map { HotSpringsArranger(it.split(" ")[0]) }
 		val damagedGroups = rows.map { DamagedGroup(it.split(" ")[1].split(",").map { size -> size.toInt() }) }
 		return SpringConditionRecords(springConditions, damagedGroups)
 	}
@@ -55,7 +55,7 @@ object Day12 : Puzzle<SpringConditionRecords>(12) {
 	override fun solvePart2(input: SpringConditionRecords): Any {
 		return input.springConditions.zip(input.damagedGroups).sumOf { (condition, group) ->
 			val duplicatedCondition =
-				SpecificSpringCondition((1..5).joinToString("") { "?${condition.description}" }.drop(1))
+				HotSpringsArranger((1..5).joinToString("") { "?${condition.description}" }.drop(1))
 			duplicatedCondition.countPossibleArrangements(List(5) { group.sizes }.flatten(), cache)
 		}
 	}
