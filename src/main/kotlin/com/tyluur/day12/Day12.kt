@@ -9,6 +9,9 @@ import com.tyluur.Puzzle
  * It provides implementations for parsing the puzzle input and solving both parts of the puzzle.
  *
  * @constructor Creates an instance of Day12 puzzle solver.
+ *
+ * @author Tyluur <contact@tyluur.com>
+ * @since December 12th, 2023
  */
 object Day12 : Puzzle<SpringConditionRecords>(12) {
 
