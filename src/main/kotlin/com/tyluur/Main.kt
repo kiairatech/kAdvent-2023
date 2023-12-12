@@ -4,6 +4,7 @@ import com.github.michaelbull.logging.InlineLogger
 import com.tyluur.day1.Day1
 import com.tyluur.day10.Day10
 import com.tyluur.day11.Day11
+import com.tyluur.day12.Day12
 import com.tyluur.day2.Day2
 import com.tyluur.day3.Day3
 import com.tyluur.day4.Day4
@@ -38,7 +39,7 @@ object Main {
 		benchmarkResults.append("| --- | ---- | -------- | ------------- | ------------ |\n")
 
 		val puzzles = mutableListOf<Puzzle<*>>(
-			Day1, Day2, Day3, Day4, Day5, Day6, Day7, Day8, Day9, Day10, Day11
+			Day1, Day2, Day3, Day4, Day5, Day6, Day7, Day8, Day9, Day10, Day11, Day12
 		)
 
 		args.firstOrNull()?.toIntOrNull()?.let { day ->
