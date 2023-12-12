@@ -1,5 +1,6 @@
 package com.tyluur
 
+import com.github.michaelbull.logging.InlineLogger
 import java.io.File
 import java.io.FileNotFoundException
 
@@ -69,4 +70,16 @@ abstract class Puzzle<T>(val number: Int) {
 	 * @return The solution to Part 2 of the puzzle, if implemented.
 	 */
 	open fun solvePart2(input: T): Any? = null
+
+	/**
+	 * Executes the solutions to both parts of the puzzle and prints both parts of the solution sets
+	 */
+	fun solve() = with(this) {
+		val parsed = parse()
+		logger.info { "Solution Set [${solvePart1(parsed)}, ${solvePart2(parsed)}]" }
+	}
+
 }
+
+/** The instance of the logger */
+private val logger = InlineLogger()
