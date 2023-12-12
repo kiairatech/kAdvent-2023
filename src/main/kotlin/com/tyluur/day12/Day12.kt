@@ -9,7 +9,7 @@ import com.tyluur.Puzzle
  * @constructor Creates a Day12 instance.
  *
  * @author Tyluur
- * @since December 10th, 2023
+ * @since December 12th, 2023
  */
 object Day12 : Puzzle<Pair<List<String>, List<List<Int>>>>(12) {
 
