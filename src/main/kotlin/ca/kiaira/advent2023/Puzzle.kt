@@ -22,15 +22,19 @@ abstract class Puzzle<T>(val number: Int) {
 	 * @return The parsed input data of type [T].
 	 * @throws FileNotFoundException if the input file is not found in the specified path.
 	 */
-	fun parse(): T {
+	fun parse(): Result<T> {
 		val fileName = "src/main/resources/day-$number-input.txt"
 		val file = File(fileName)
 
-		if (!file.exists()) {
-			throw FileNotFoundException("Input file $fileName not found.")
-		}
+		return try {
+			if (!file.exists()) {
+				throw FileNotFoundException("Input file $fileName not found.")
+			}
 
-		return file.useLines { lines -> parse(lines) }
+			Result.success(file.useLines { lines -> parse(lines) })
+		} catch (e: Exception) {
+			Result.failure(e)
+		}
 	}
 
 	/**
@@ -40,8 +44,12 @@ abstract class Puzzle<T>(val number: Int) {
 	 * @param input The input data as a string.
 	 * @return The parsed input data of type [T].
 	 */
-	fun parse(input: String): T {
-		return parse(input.splitToSequence('\n'))
+	fun parse(input: String): Result<T> {
+		return try {
+			Result.success(parse(input.splitToSequence('\n')))
+		} catch (e: Exception) {
+			Result.failure(e)
+		}
 	}
 
 	/**
@@ -75,11 +83,10 @@ abstract class Puzzle<T>(val number: Int) {
 	 * Executes the solutions to both parts of the puzzle and prints both parts of the solution sets
 	 */
 	fun solve() = with(this) {
-		val parsed = parse()
+		val parsed = parse().getOrThrow()
 		logger.info { "Solution Set [${solvePart1(parsed)}, ${solvePart2(parsed)}]" }
 	}
 
+	/** The instance of the logger */
+	private val logger = InlineLogger()
 }
-
-/** The instance of the logger */
-private val logger = InlineLogger()

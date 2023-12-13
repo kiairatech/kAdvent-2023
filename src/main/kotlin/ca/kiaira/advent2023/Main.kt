@@ -63,7 +63,7 @@ object Main {
 	private fun <T> solve(puzzle: Puzzle<T>) {
 		// Measure time taken to parse the puzzle input.
 		val input = measureTimedValue {
-			puzzle.parse()
+			puzzle.parse().getOrThrow()
 		}
 
 		// Solve Part 1 of the puzzle and measure the time taken.
