@@ -202,8 +202,3 @@ object Day14 : Puzzle<Array<Array<Char>>>(14) {
 	}
 
 }
-
-/**
- * Entry point for running the Day 14 Puzzle solver.
- */
-fun main() = Day14.solve()
