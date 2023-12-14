@@ -84,7 +84,10 @@ abstract class Puzzle<T>(val number: Int) {
 	 */
 	fun solve() = with(this) {
 		val parsed = parse().getOrThrow()
-		logger.info { "Solution Set [${solvePart1(parsed)}, ${solvePart2(parsed)}]" }
+
+		logger.info { "Day $number Solutions" }
+		logger.info { "Part 1: ${solvePart1(parsed)}" }
+		logger.info { "Part 2: ${solvePart2(parsed)}" }
 	}
 
 	/** The instance of the logger */
