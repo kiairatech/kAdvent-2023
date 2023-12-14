@@ -5,6 +5,9 @@ import ca.kiaira.advent2023.Puzzle
 /**
  * The main object representing the puzzle for Day 13.
  * It extends the Puzzle class and provides implementations for parsing and solving.
+ *
+ * @author Muthigani Kiaira <mukiaira@gmail.com>
+ * @since December 13th, 2023
  */
 object Day13 : Puzzle<List<GridPattern>>(13) {
 
