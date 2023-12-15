@@ -6,6 +6,7 @@ import ca.kiaira.advent2023.day11.Day11
 import ca.kiaira.advent2023.day12.Day12
 import ca.kiaira.advent2023.day13.Day13
 import ca.kiaira.advent2023.day14.Day14
+import ca.kiaira.advent2023.day15.Day15
 import ca.kiaira.advent2023.day2.Day2
 import ca.kiaira.advent2023.day3.Day3
 import ca.kiaira.advent2023.day4.Day4
@@ -41,7 +42,7 @@ object Main {
 		benchmarkResults.append("| --- | ---- | -------- | ------------- | ------------ |\n")
 
 		val puzzles = mutableListOf<Puzzle<*>>(
-			Day1, Day2, Day3, Day4, Day5, Day6, Day7, Day8, Day9, Day10, Day11, Day12, Day13, Day14
+			Day1, Day2, Day3, Day4, Day5, Day6, Day7, Day8, Day9, Day10, Day11, Day12, Day13, Day14, Day15
 		)
 
 		args.firstOrNull()?.toIntOrNull()?.let { day ->
