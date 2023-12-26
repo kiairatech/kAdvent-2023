@@ -31,6 +31,8 @@ dependencies {
 	// Kotlin
 	implementation("org.jetbrains.kotlinx", "kotlinx-coroutines-core", "1.4.2")
 
+	implementation("org.jgrapht:jgrapht-core:1.5.2")
+
 	// Logging
 	implementation("ch.qos.logback:logback-classic:1.2.9") {
 		exclude("org.slf4j", "slf4j-jdk14")
