@@ -88,8 +88,3 @@ object Day15 : Puzzle<List<String>>(15) {
 		return hash
 	}
 }
-
-/**
- * Entry point of the program. Calls the solve method of Day15.
- */
-fun main() = Day15.solve()
